@@ -29,7 +29,7 @@
               <button class="state-management-button">{{ todo.state }}</button>
             </td>
             <td>
-              <button>削除</button>
+              <button @click="deleteTask(index)">削除</button>
             </td>
           </tr>
         </tbody>
@@ -59,6 +59,11 @@ export default {
         this.todos.push({ task: this.newTask, state:'作業中'});
       }
       this.newTask = '';
+    },
+    deleteTask(id) {
+      if(id > -1) {
+        this.todos.splice(id,1);
+      }
     }
   }
 };
