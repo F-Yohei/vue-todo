@@ -48,7 +48,7 @@
 export default {
   data() {
     return {
-      newTask: "",
+      newTask: '',
       todos: []
     };
   },
@@ -58,7 +58,7 @@ export default {
       if (this.newTask.match(/\S/g)) {
         this.todos.push({ task: this.newTask, state:'作業中'});
       }
-      this.newTask = "";
+      this.newTask = '';
     }
   }
 };
