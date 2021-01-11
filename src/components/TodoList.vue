@@ -22,11 +22,11 @@
         </thead>
 
         <tbody id="todoList">
-          <tr v-for="(todo,index) in todos" :key="todo.state">
+          <tr v-for="(todo, index) in todos" :key="todo.state">
             <td>{{ index }}</td>
             <td>{{ todo.task }}</td>
             <td>
-              <button class="state-management-button">{{ todo.state }}</button>
+              <button class="state-management-button" @click="stateChange(index)">{{ todo.state }}</button>
             </td>
             <td>
               <button @click="deleteTask(index)">削除</button>
@@ -63,6 +63,13 @@ export default {
     deleteTask(id) {
       if(id > -1) {
         this.todos.splice(id, 1);
+      }
+    },
+    stateChange(id) {
+      if(this.todos[id].state === '作業中') {
+        this.todos[id].state = '完了';
+      } else if(this.todos[id].state === '完了') {
+        this.todos[id].state = '作業中';
       }
     }
   }
