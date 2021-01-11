@@ -56,13 +56,13 @@ export default {
     addNewTask(e) {
       e.preventDefault();
       if (this.newTask.match(/\S/g)) {
-        this.todos.push({ task: this.newTask, state:'作業中'});
+        this.todos.push({ task: this.newTask, state: '作業中'});
       }
       this.newTask = '';
     },
     deleteTask(id) {
       if(id > -1) {
-        this.todos.splice(id,1);
+        this.todos.splice(id, 1);
       }
     }
   }
