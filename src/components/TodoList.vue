@@ -3,11 +3,11 @@
   <div>
     <h1>ToDoリスト</h1>
     <form>
-      <input type="radio" name="state" id="allTodo" checked />
+      <input type="radio" name="state" id="allTodo" checked @click="allTodo"/>
       <label for="allTodo">すべて</label>
-      <input type="radio" name="state" id="workingTodo" />
+      <input type="radio" name="state" id="workingTodo" @click="workingTodo" />
       <label for="workingTodo">作業中</label>
-      <input type="radio" name="state" id="doneTodo" />
+      <input type="radio" name="state" id="doneTodo" @click="doneTodo"/>
       <label for="doneTodo">完了</label>
     </form>
 
@@ -22,7 +22,7 @@
         </thead>
 
         <tbody id="todoList">
-          <tr v-for="(todo, index) in todos" :key="todo.state">
+          <tr v-for="(todo, index) in todos" :key="todo.state" v-bind:class="{ hide: todo.viewChange}">
             <td>{{ index }}</td>
             <td>{{ todo.task }}</td>
             <td>
@@ -39,7 +39,7 @@
     <h2>新規タスクの追加</h2>
     <form>
       <input type="text" class="todoInput" v-model="newTask" />
-      <button type="submit" value="追加"  @click="addNewTask">追加</button>
+      <button type="submit" value="追加" @click="addNewTask">追加</button>
     </form>
   </div>
 </template>
@@ -48,7 +48,7 @@
 export default {
   data() {
     return {
-      newTask: '',
+      newTask: "",
       todos: []
     };
   },
@@ -56,21 +56,44 @@ export default {
     addNewTask(e) {
       e.preventDefault();
       if (this.newTask.match(/\S/g)) {
-        this.todos.push({ task: this.newTask, state: '作業中'});
+        this.todos.push({ task: this.newTask, state: "作業中", viewChange: false });
       }
-      this.newTask = '';
+      this.newTask = "";
     },
     deleteTask(id) {
-      if(id > -1) {
+      if (id > -1) {
         this.todos.splice(id, 1);
       }
     },
     changeState(id) {
-      if(this.todos[id].state === '作業中') {
-        this.todos[id].state = '完了';
-      } else if(this.todos[id].state === '完了') {
-        this.todos[id].state = '作業中';
+      if (this.todos[id].state === "作業中") {
+        this.todos[id].state = "完了";
+      } else if (this.todos[id].state === "完了") {
+        this.todos[id].state = "作業中";
       }
+    },
+    workingTodo() {
+        this.todos.forEach(todo => {
+          if (todo.state === "完了") {
+            todo.viewChange = true;
+          } else {
+            todo.viewChange = false;
+          }
+        });
+    },
+    doneTodo() {
+        this.todos.forEach(todo => {
+          if (todo.state === "作業中") {
+            todo.viewChange = true;
+          } else {
+            todo.viewChange = false;
+          }
+        });
+    },
+    allTodo() {
+      this.todos.forEach((todo) => {
+        todo.viewChange = false;
+      });
     }
   }
 };
@@ -78,11 +101,15 @@ export default {
 
 <style scoped>
 .state-management-button {
-  margin-right:10px;
+  margin-right: 10px;
 }
 
 .todoInput {
   margin-right: 10px;
+}
+
+.hide {
+  display: none;
 }
 </style>
 
