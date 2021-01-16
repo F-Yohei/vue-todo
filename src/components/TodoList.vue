@@ -3,11 +3,11 @@
   <div>
     <h1>ToDoリスト</h1>
     <form>
-      <input type="radio" name="state" id="allTodo" checked @click="allTodo"/>
+      <input type="radio" name="state" id="allTodo" checked v-on:change="allTodo" />
       <label for="allTodo">すべて</label>
-      <input type="radio" name="state" id="workingTodo" @click="workingTodo" />
+      <input type="radio" name="state" id="workingTodo" v-on:change="workingTodo" />
       <label for="workingTodo">作業中</label>
-      <input type="radio" name="state" id="doneTodo" @click="doneTodo"/>
+      <input type="radio" name="state" id="doneTodo" v-on:change="doneTodo" />
       <label for="doneTodo">完了</label>
     </form>
 
@@ -22,14 +22,14 @@
         </thead>
 
         <tbody id="todoList">
-          <tr v-for="(todo, index) in todos" :key="todo.state" v-bind:class="{ hide: todo.viewChange}">
-            <td>{{ index }}</td>
+          <tr v-for="(todo, index) in viewTodos" :key="index">
+            <td>{{ todo.id }}</td>
             <td>{{ todo.task }}</td>
             <td>
-              <button class="state-management-button" @click="changeState(index)">{{ todo.state }}</button>
+              <button class="state-management-button" @click="changeState(todo.id)">{{ todo.state }}</button>
             </td>
             <td>
-              <button @click="deleteTask(index)">削除</button>
+              <button @click="deleteTask(todo.id)">削除</button>
             </td>
           </tr>
         </tbody>
@@ -49,20 +49,33 @@ export default {
   data() {
     return {
       newTask: "",
-      todos: []
+      todos: [],
+      displayState: ''
     };
+  },
+  computed: {
+    viewTodos() {
+      return this.displayState ? this.todos.filter((todo) => todo.state === this.displayState) : this.todos;
+    }
   },
   methods: {
     addNewTask(e) {
       e.preventDefault();
       if (this.newTask.match(/\S/g)) {
-        this.todos.push({ task: this.newTask, state: "作業中", viewChange: false });
+        this.todos.push({
+          id: this.todos.length,
+          task: this.newTask,
+          state: "作業中"
+        });
       }
       this.newTask = "";
     },
     deleteTask(id) {
       if (id > -1) {
         this.todos.splice(id, 1);
+        this.todos.forEach((todo,index) => {
+          todo.id = index;
+        })
       }
     },
     changeState(id) {
@@ -73,31 +86,18 @@ export default {
       }
     },
     workingTodo() {
-        this.todos.forEach(todo => {
-          if (todo.state === "完了") {
-            todo.viewChange = true;
-          } else {
-            todo.viewChange = false;
-          }
-        });
+        this.displayState = '作業中';
     },
     doneTodo() {
-        this.todos.forEach(todo => {
-          if (todo.state === "作業中") {
-            todo.viewChange = true;
-          } else {
-            todo.viewChange = false;
-          }
-        });
+      this.displayState = '完了';
     },
     allTodo() {
-      this.todos.forEach((todo) => {
-        todo.viewChange = false;
-      });
+      this.displayState = '';
     }
   }
 };
 </script>
+
 
 <style scoped>
 .state-management-button {
@@ -107,9 +107,4 @@ export default {
 .todoInput {
   margin-right: 10px;
 }
-
-.hide {
-  display: none;
-}
 </style>
-
